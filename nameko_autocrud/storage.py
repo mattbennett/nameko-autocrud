@@ -1,4 +1,4 @@
-from sqlalchemy_filters import apply_filters, apply_sort
+from sqlalchemy_filters import apply_loads, apply_filters, apply_sort
 
 
 class NotFound(LookupError):
@@ -26,10 +26,14 @@ class DBStorage(object):
     def get(self, pk):
         return self._get(pk)
 
-    def list(self, filters=None, order_by=None, offset=None, limit=None):
+    def list(
+        self, filters=None, loads=None, order_by=None, offset=None, limit=None
+    ):
         query = self.query
         if filters:
             query = apply_filters(query, filters)
+        if loads:
+            query = apply_loads(query, loads)
         if order_by:
             query = apply_sort(query, order_by)
         if offset:
@@ -52,6 +56,7 @@ class DBStorage(object):
             setattr(obj, key, value)
         if commit:
             self.session.commit()
+            self.session.refresh(obj)
         elif flush:
             self.session.flush()
             self.session.refresh(obj)
@@ -62,6 +67,7 @@ class DBStorage(object):
         self.session.add(obj)
         if commit:
             self.session.commit()
+            self.session.refresh(obj)
         elif flush:
             self.session.flush()
             self.session.refresh(obj)

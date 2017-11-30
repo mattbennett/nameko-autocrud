@@ -57,6 +57,12 @@ class TestStorageList:
         results = storage.list(filters={'field': 'id', 'op': '>', 'value': 1})
         assert results == instances[1:]
 
+    def test_list_loads(self, instances, storage):
+        results = storage.list(loads=['id'])
+        for result in results:
+            assert 'id' in result.__dict__
+            assert 'name' not in result.__dict__
+
     def test_list_offset(self, instances, storage):
         results = storage.list(offset=1)
         assert results == instances[1:]

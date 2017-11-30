@@ -10,14 +10,12 @@ from sqlalchemy_utils import ChoiceType
 
 def default_to_serializable(obj):
     """ Convert a sqlalchemy model instance to a dict ready for serialization.
+
+    Serializes the fields on `obj` that have already been loaded from the db,
+    therefore does not include any model fields that have deferred loads.
     """
-    try:
-        dict_ = obj.to_dict()
-    except AttributeError:
-        dict_ = {
-            col.name: getattr(obj, col.name)
-            for col in obj.__table__.columns
-        }
+    dict_ = obj.__dict__.copy()
+    dict_.pop('_sa_instance_state')
 
     def get_value(val):
         if val is None:

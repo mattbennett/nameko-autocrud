@@ -19,13 +19,18 @@ class CrudManager(object):
         obj = self.db_storage.get(pk)
         return self.to_serializable(obj)
 
-    def list(self, filters=None, order_by=None, offset=None, limit=None):
+    def list(
+        self, filters=None, loads=None, order_by=None, offset=None, limit=None
+    ):
         results = self.db_storage.list(
-            filters=filters, order_by=order_by, offset=offset, limit=limit
+            filters=filters, loads=loads,
+            order_by=order_by, offset=offset, limit=limit
         )
         return [self.to_serializable(result) for result in results]
 
-    def page(self, page_size, page_num, filters=None, order_by=None):
+    def page(
+        self, page_size, page_num, filters=None, loads=None, order_by=None
+    ):
         if page_size < 1:
             raise ValueError('Invalid page_size ({})'.format(page_size))
         if page_num < 1:
@@ -36,7 +41,8 @@ class CrudManager(object):
         total = self.count(filters=filters)
         num_pages = math.ceil(total / page_size)
         results = self.list(
-            filters=filters, order_by=order_by, offset=offset, limit=limit
+            filters=filters, loads=loads,
+            order_by=order_by, offset=offset, limit=limit
         )
         return {
             'results': results,

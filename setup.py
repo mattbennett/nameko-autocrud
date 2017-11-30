@@ -11,7 +11,7 @@ setup(
     install_requires=[
         "nameko>=2.6.0",
         "sqlalchemy>=1.0.16",
-        "sqlalchemy_filters>=0.4.0",
+        "sqlalchemy_filters>=0.6.0",
         "python-dateutil==2.6.1",
     ],
     extras_require={
